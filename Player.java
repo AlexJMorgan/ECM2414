@@ -109,7 +109,7 @@ public class Player {
 			}
 		}
 		card.resetStaleness();
-		discardDeck.addCard(card);
+		discardDeck.giveCard(card);
 	}	
 	
 	
