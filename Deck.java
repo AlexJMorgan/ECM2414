@@ -65,4 +65,12 @@ public class Deck{
 		return card;
 	}
 	
+	public ArrayList<Card> getInPileReference() {
+		return inPile;
+	}
+	
+	public ArrayList<Card> getOutPileReference() {
+		return outPile;
+	}
+	
 }
