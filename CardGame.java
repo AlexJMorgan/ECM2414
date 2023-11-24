@@ -27,10 +27,9 @@ public class CardGame {
 		for (int i = 0; i < n; i++) {
 			try {
 				File file = new File("deck"+(i+1)+"_output.txt";
-			      	if (file.createNewFile()) {
-					System.out.println("File created: " + file.getName());
-			      	} else {
-					System.out.println("File already exists.");
+				if (!file.createNewFile()) {
+					file.delete();
+					file.createNewFile();
 			      	}
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
@@ -42,10 +41,9 @@ public class CardGame {
 			discardDeck = decks.get((i+1)%n).getInPile();
 			try {
 				File file = new File("player"+(i+1)+"_output.txt");
-			      	if (file.createNewFile()) {
-					System.out.println("File created: " + file.getName());
-			      	} else {
-			        	System.out.println("File already exists.");
+			      	if (!file.createNewFile()) {
+					file.delete();
+					file.createNewFile();
 			      	}
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
