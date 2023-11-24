@@ -30,7 +30,18 @@ public class CardGame {
 		for (int i = 0; i < n; i++) {
 			drawDeck = decks.get(i).getOutPile();
 			discardDeck = decks.get((i+1)%n).getInPile();
-			players.add(new Player(i, drawDeck, discardDeck));
+			try {
+				File file = new File("Player"+"i+1"+".txt");
+			      	if (file.createNewFile()) {
+					System.out.println("File created: " + file.getName());
+			      	} else {
+			        	System.out.println("File already exists.");
+			      	}
+			} catch (IOException e) {
+				System.out.println("An error occurred.");
+			      	e.printStackTrace();
+			}
+			players.add(new Player(i, drawDeck, discardDeck, file));
 		}
 		ArrayList<Card> pack = ReadPack(n);
 		DealCards(players, decks, pack);
