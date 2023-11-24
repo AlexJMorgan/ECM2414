@@ -25,13 +25,23 @@ public class CardGame {
 		ArrayList<Player> players;
 		ArrayList<Deck> decks;
 		for (int i = 0; i < n; i++) {
-			decks.add(new Deck());
+			try {
+				File file = new File("deck"+(i+1)+"_output.txt";
+			      	if (file.createNewFile()) {
+					System.out.println("File created: " + file.getName());
+			      	} else {
+					System.out.println("File already exists.");
+			      	}
+			} catch (IOException e) {
+				System.out.println("An error occurred.");
+			}
+			decks.add(new Deck(file));
 		}
 		for (int i = 0; i < n; i++) {
 			drawDeck = decks.get(i).getOutPile();
 			discardDeck = decks.get((i+1)%n).getInPile();
 			try {
-				File file = new File("Player"+"i+1"+".txt");
+				File file = new File("player"+(i+1)+"_output.txt");
 			      	if (file.createNewFile()) {
 					System.out.println("File created: " + file.getName());
 			      	} else {
@@ -39,7 +49,6 @@ public class CardGame {
 			      	}
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
-			      	e.printStackTrace();
 			}
 			players.add(new Player(i, drawDeck, discardDeck, file));
 		}
