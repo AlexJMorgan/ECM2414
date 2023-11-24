@@ -13,6 +13,11 @@ public class Deck{
 	private ArrayList<Card> inPile;
 	private ArrayList<Card> midPile;
 	private ArrayList<Card> outPile;
+	private File file;
+
+	public Deck(File file) {
+		this.file = file;
+	}
 	
 	/**
 	*Checks if the deck is empty

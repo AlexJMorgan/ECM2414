@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileWriter; 
 
 /**
 *The main class for the card game.
@@ -12,19 +14,41 @@ public class CardGame {
 	
 	private ArrayList<Player> players;
 	private ArrayList<Deck> decks;
-	
+
+	/**
+ 	*Main method invoked when the object is instantiated.
+  	*Creates a deck object for each player.
+   	*Creates n player objects.
+  	*/
 	public static void main(String[] args) {
-		
 		int n = GetN();
 		ArrayList<Player> players;
 		ArrayList<Deck> decks;
 		for (int i = 0; i < n; i++) {
-			decks.add(new Deck());
+			try {
+				File file = new File("deck"+(i+1)+"_output.txt";
+				if (!file.createNewFile()) {
+					file.delete();
+					file.createNewFile();
+			      	}
+			} catch (IOException e) {
+				System.out.println("An error occurred.");
+			}
+			decks.add(new Deck(file));
 		}
 		for (int i = 0; i < n; i++) {
 			drawDeck = decks.get(i).getOutPile();
 			discardDeck = decks.get((i+1)%n).getInPile();
-			players.add(new Player(i, drawDeck, discardDeck));
+			try {
+				File file = new File("player"+(i+1)+"_output.txt");
+			      	if (!file.createNewFile()) {
+					file.delete();
+					file.createNewFile();
+			      	}
+			} catch (IOException e) {
+				System.out.println("An error occurred.");
+			}
+			players.add(new Player(i, drawDeck, discardDeck, file));
 		}
 		ArrayList<Card> pack = ReadPack(n);
 		DealCards(players, decks, pack);
@@ -52,7 +76,10 @@ public class CardGame {
 	}
 	
 	/**
-	*
+	*Reads the pack the user provided. 
+ 	*Continues asking the user for a pack, until they provide a valid input.
+  	*Outputs the necessary error message to inform the user of the issue.
+   	*@param n	Provides the number of players to ensure there are 8*n cards provided.
 	*/	
 	public static ArrayList<Card> ReadPack(int n) {
 		while (true) {
@@ -89,6 +116,4 @@ public class CardGame {
 			System.out.println(errorMsg);
 		}
 	}
-	
-	
 }
