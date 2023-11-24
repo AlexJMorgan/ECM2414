@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter; 
+import java.io.IOException;
 
 /**
 *Player Class to represent each player in the card game.
@@ -12,6 +15,7 @@ public class Player {
 	private int index;
 	private ArrayList<Card> drawDeck;
 	private ArrayList<Card> discardDeck;
+	private File file
 	
 	/**
 	*Constructor method for Player class.
@@ -19,11 +23,12 @@ public class Player {
 	*@param drawDeck     the deck to be drawn from
 	*@param discardDeck  the deck to be discarded to
 	*/
-	public Player(int index, ArrayList<Card> drawDeck, ArrayList<Card> discardDeck) {
+	public Player(int index, ArrayList<Card> drawDeck, ArrayList<Card> discardDeck, File file) {
 		this.cards = new ArrayList<>();
 		this.index = index;
 		this.drawDeck = drawDeck;
 		this.discardDeck = discardDeck;
+		this.file = file;
 	}
 	
 	/**
@@ -111,6 +116,17 @@ public class Player {
 		card.resetStaleness();
 		discardDeck.giveCard(card);
 	}	
+
+	public void writeToFile(File file) {
+		try {
+			FileWriter writer = new FileWriter(file.getName(), true);
+		      	myWriter.write("stuff");
+		      	myWriter.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+		}
+	}
+	
 	
 	
 	
