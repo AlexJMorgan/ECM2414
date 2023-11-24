@@ -10,8 +10,8 @@ public class Player {
 
 	private ArrayList<Card> cards;
 	private int index;
-	private Deck drawDeck;
-	private Deck discardDeck;
+	private ArrayList<Card> drawDeck;
+	private ArrayList<Card> discardDeck;
 	
 	/**
 	*Constructor method for Player class.
@@ -19,7 +19,7 @@ public class Player {
 	*@param drawDeck     the deck to be drawn from
 	*@param discardDeck  the deck to be discarded to
 	*/
-	public Player(int index, Deck drawDeck, Deck discardDeck) {
+	public Player(int index, ArrayList<Card> drawDeck, ArrayList<Card> discardDeck) {
 		this.cards = new ArrayList<>();
 		this.index = index;
 		this.drawDeck = drawDeck;
