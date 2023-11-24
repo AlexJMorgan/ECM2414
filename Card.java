@@ -6,16 +6,15 @@
 public class Card {
 
 	private int value;
-	private int stale;
+	private int stale = 0;
 	
 	/**
 	*Constructor method for the Card class.
 	*@param value	value of the card.
 	*@param stale	turns the card has been in the same hand
 	*/
-	public Card(int value, int stale) {
+	public Card(int value) {
 		this.value = value;
-		this.stale = stale;
 	}
 	
 	/**

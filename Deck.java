@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.File;
 
 /**
 *Class for deck
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 */
 public class Deck{
 	
-	private ArrayList<Card> inPile;
-	private ArrayList<Card> midPile;
-	private ArrayList<Card> outPile;
+	private ArrayList<Card> inPile = new ArrayList<>();
+	private ArrayList<Card> midPile = new ArrayList<>();;
+	private ArrayList<Card> outPile = new ArrayList<>();;
 	private File file;
 
 	public Deck(File file) {
@@ -23,8 +24,8 @@ public class Deck{
 	*Checks if the deck is empty
 	*@return	true if the deck is empty, otherwise false
 	*/
-	public boolean isEmpty() {
-		return cards.size() == 0;
+	public boolean outPileIsEmpty() {
+		return outPile.size() == 0;
 	}
 	
 	/**
