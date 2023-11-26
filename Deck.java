@@ -12,8 +12,8 @@ import java.io.File;
 public class Deck{
 	
 	private ArrayList<Card> inPile = new ArrayList<>();
-	private ArrayList<Card> midPile = new ArrayList<>();;
-	private ArrayList<Card> outPile = new ArrayList<>();;
+	private ArrayList<Card> midPile = new ArrayList<>();
+	private ArrayList<Card> outPile = new ArrayList<>();
 	private File file;
 
 	public Deck(File file) {
@@ -71,12 +71,9 @@ public class Deck{
 		return card;
 	}
 	
-	public ArrayList<Card> getInPileReference() {
-		return inPile;
+	public boolean isEmpty() {
+		return outPile.size() == 0;	
+		
 	}
-	
-	public ArrayList<Card> getOutPileReference() {
-		return outPile;
-	}
-	
+		
 }

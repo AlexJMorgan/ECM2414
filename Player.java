@@ -13,19 +13,24 @@ public class Player {
 
 	private ArrayList<Card> cards;
 	private int index;
-	private ArrayList<Card> drawDeck;
-	private ArrayList<Card> discardDeck;
-	private File file
+	private int discardIndex;
+	private File file;
+	private Deck drawDeck;
+	private Deck discardDeck;
+	
 	
 	/**
 	*Constructor method for Player class.
-	*@param index        used to refer to the player in log messages and set preferred card value
-	*@param drawDeck     the deck to be drawn from
-	*@param discardDeck  the deck to be discarded to
+	*@param index			used to refer to the player in log messages and set preferred card value
+	*@param discardIndex	used to refer to the discard deck in log messages
+	*@param drawDeck		deck the player draws cards from
+	*@param discarDeck		deck the player discards cards to
+	*@param file			file reference where player outputs their moves
 	*/
-	public Player(int index, ArrayList<Card> drawDeck, ArrayList<Card> discardDeck, File file) {
+	public Player(int index, int discardIndex, Deck drawDeck, Deck discardDeck, File file) {
 		this.cards = new ArrayList<>();
 		this.index = index;
+		this.discardIndex = discardIndex;
 		this.drawDeck = drawDeck;
 		this.discardDeck = discardDeck;
 		this.file = file;
@@ -46,8 +51,8 @@ public class Player {
 	*/
 	private boolean checkWin() {
 		int val = cards.get(0).getValue();
-		for (i = 1; i<4; i++) {
-			if (cards.get(i)).getValue() != val) {
+		for (int i = 1; i<4; i++) {
+			if (cards.get(i).getValue() != val) {
 				return false;
 			}
 		}
@@ -60,18 +65,39 @@ public class Player {
 	*/
 	public void makeTurn() {
 		synchronized (drawDeck) {
-			if (drawDeck.isEmpty()) {
+			try {
+				if (drawDeck.isEmpty()) {
 				drawDeck.wait();
-			}
-			synchronized (discardDeck) {
-				draw();
-				discard();
-				for (int i = 0; i<4; i++) {
-					cards.get(i).addStaleness();
 				}
-				discardDeck.notify();
+				synchronized (discardDeck) {
+					draw();
+					discard();
+					for (int i = 0; i<4; i++) {
+						cards.get(i).addStaleness();
+					}
+					discardDeck.notify();
+				}
+			} catch (InterruptedException e) {
+				System.out.println("Interrupted makeTurn for Player "+index);
 			}
 		}
+		String cardValues = "";
+		for (int i=0; i<4; i++) {
+			cardValues += " " + cards.get(i).getValue();
+
+		}
+	
+		
+		writeToFile(file, "\nplayer "+index+" current hand is"+cardValues)
+		
+	}
+	
+	public void playerInitialHand() {
+		String initialHand = "";
+		for (int i=0; i<4; i++) {
+			cardValues += " " + cards.get(i).getValue();
+		}
+		writeToFile(file, "\nplayer "+index+" initial hand is"+initialHand)
 	}
 	
 	/**
@@ -79,6 +105,7 @@ public class Player {
 	*/
 	public void draw() {
 		Card card = drawDeck.getCard();
+		writeToFile(file, "\nplayer "+index+" draws a "+card.getValue()+" from deck "+index);
 		cards.add(card);
 	}
 	
@@ -90,7 +117,7 @@ public class Player {
 	*/
 	public void discard() {
 		boolean decided = false;
-		Card card;
+		Card card = new Card(3000);
 		
 		for (int i = 0; i<4; i++) {
 			card = cards.get(i);
@@ -114,14 +141,15 @@ public class Player {
 			}
 		}
 		card.resetStaleness();
+		writeToFile(file, "\nplayer "+index+" discards a "+card.getValue()+" to deck "+discardIndex);
 		discardDeck.giveCard(card);
 	}	
 
-	public void writeToFile(File file) {
+	public void writeToFile(File file, String msg) {
 		try {
 			FileWriter writer = new FileWriter(file.getName(), true);
-		      	myWriter.write("stuff");
-		      	myWriter.close();
+		      	writer.write(msg);
+		      	writer.close();
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 		}

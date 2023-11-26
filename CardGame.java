@@ -48,7 +48,9 @@ public class CardGame {
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
 			}
-			players.add(new Player(i, drawDeck, discardDeck, file));
+			
+			
+			players.add(new Player(i, (i+1)%n, drawDeck, discardDeck, file));
 		}
 		ArrayList<Card> pack = ReadPack(n);
 		DealCards(players, decks, pack);
