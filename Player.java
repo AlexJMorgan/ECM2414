@@ -49,7 +49,7 @@ public class Player {
 	*Checks if the player has four matching cards.
 	*@return  true if player has won
 	*/
-	private boolean checkWin() {
+	public boolean checkWin() {
 		int val = cards.get(0).getValue();
 		for (int i = 1; i<4; i++) {
 			if (cards.get(i).getValue() != val) {
@@ -88,16 +88,16 @@ public class Player {
 		}
 	
 		
-		writeToFile(file, "\nplayer "+index+" current hand is"+cardValues)
+		writeToFile(file, "\nplayer "+index+" current hand is"+cardValues);
 		
 	}
 	
 	public void playerInitialHand() {
 		String initialHand = "";
 		for (int i=0; i<4; i++) {
-			cardValues += " " + cards.get(i).getValue();
+			initialHand += " " + cards.get(i).getValue();
 		}
-		writeToFile(file, "\nplayer "+index+" initial hand is"+initialHand)
+		writeToFile(file, "\nplayer "+index+" initial hand is"+initialHand);
 	}
 	
 	/**
