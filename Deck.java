@@ -9,15 +9,26 @@ import java.io.File;
 *@author Daniel and Alex
 *@version 0.1
 */
-public class Deck{
-	
+
+public class Deck {
+		
 	private ArrayList<Card> inPile = new ArrayList<>();
 	private ArrayList<Card> midPile = new ArrayList<>();
 	private ArrayList<Card> outPile = new ArrayList<>();
+	public Object inLock = new Object();
+	public Object midLock = new Object();
+	public Object outLock = new Object();
 	private File file;
+	private int index;
 
-	public Deck(File file) {
+	public Deck(File file, int index) {
 		this.file = file;
+		InDaemon inDaemon = new InDaemon(this);
+		Thread inDaemonThread = new Thread(inDaemon);		
+		OutDaemon outDaemon = new OutDaemon(this);
+		Thread outDaemonThread = new Thread(outDaemon);	
+		inDaemonThread.start();
+		outDaemonThread.start();
 	}
 	
 	/**
@@ -71,9 +82,83 @@ public class Deck{
 		return card;
 	}
 	
+	/**
+	*Checks if outpile is empty.
+	*@return	boolean for if outpile is equal to 0
+	*/
 	public boolean isEmpty() {
 		return outPile.size() == 0;	
 		
 	}
+	
+	public void printDeckContents() {
+		String hand = ""
+		ArrayList<Card> allCards = new ArrayList<>();
+		allCards.addAll(inPile);
+		allCards.addAll(outPile);
+		allCards.addAll(midPile);
+		
+		for (int i = 0; i<4; i++) {
+			hand += " "+ allCards.get(i).getValue();
+		}
+		String msg = "deck" + index + "contents:" +hand;		
+		
+		try {
+			FileWriter writer = new FileWriter(file.getName(), true);
+		      	writer.write(msg);
+		      	writer.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+		}
+		
+	}
 		
 }
+
+class InDaemon implements Runnable{
+
+	private Deck deck;
+	
+	public InDaemon(Deck deck) {
+		this.deck = deck;
+		
+	}
+	
+	public void run() {
+		
+		synchronized (deck.inLock) {
+			while (true) {
+				deck.inLock.wait();
+				synchronized (deck.midLock) {
+					deck.inPileToMid();
+				}
+			}			
+		}
+		
+	}
+	
+}
+
+class OutDaemon implements Runnable{
+	
+	private Deck deck;
+	
+	public OutDaemon(Deck deck) {
+		this.deck = deck;
+	}
+	
+	public void run() {
+		synchronized (deck.outLock) {
+			while (true) {
+				deck.outLock.wait();
+				synchronized (deck.midLock) {
+					deck.midPileToOut();
+				}
+				deck.outLock.notify();
+			}			
+		}
+	}
+}
+
+
+

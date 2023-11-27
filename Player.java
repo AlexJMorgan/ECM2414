@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileWriter; 
 import java.io.IOException;
 
+
 /**
 *Player Class to represent each player in the card game.
 *Stores its hand of cards and the decks it draws/discards from.
@@ -10,8 +11,7 @@ import java.io.IOException;
 *@version 0.1
 */
 
-
-public class Player {
+public class Player implements Runnable{
 
 	private ArrayList<Card> cards;
 	private int index;
@@ -36,6 +36,37 @@ public class Player {
 		this.drawDeck = drawDeck;
 		this.discardDeck = discardDeck;
 		this.file = file;
+	}
+	
+	public void run() {
+		
+		playerInitialHand();
+		while (!checkWin()) {
+			synchronized (discardDeck.inLock) {
+				synchronized (drawDeck.outLock) {
+					try {
+						if (drawDeck.isEmpty()) {
+							drawDeck.outLock.notify();
+							drawDeck.outLock.wait();
+						}
+						
+						draw();
+						discard();
+					} catch (InterruptedException e) {
+						System.out.println("Player "+index+" was interrupted");
+					}
+				}
+				
+				discardDeck.inLock.notify();				
+			}
+			String cardValues = "";
+			for (int i=0; i<4; i++) {
+				cardValues += " " + cards.get(i).getValue();
+			}
+			writeToFile(file, "\nplayer "+index+" current hand is"+cardValues);
+		}
+		
+		
 	}
 	
 	/**
@@ -65,34 +96,6 @@ public class Player {
 	*Draws a card from the draw pile, and discards an unwanted card to the discard pile.
 	*Will wait if draw deck is empty, and notify waiting threads when discarding.
 	*/
-	public void makeTurn() {
-		synchronized (drawDeck) {
-			try {
-				if (drawDeck.isEmpty()) {
-				drawDeck.wait();
-				}
-				synchronized (discardDeck) {
-					draw();
-					discard();
-					for (int i = 0; i<4; i++) {
-						cards.get(i).addStaleness();
-					}
-					discardDeck.notify();
-				}
-			} catch (InterruptedException e) {
-				System.out.println("Interrupted makeTurn for Player "+index);
-			}
-		}
-		String cardValues = "";
-		for (int i=0; i<4; i++) {
-			cardValues += " " + cards.get(i).getValue();
-
-		}
-	
-		
-		writeToFile(file, "\nplayer "+index+" current hand is"+cardValues);
-		
-	}
 	
 	public void playerInitialHand() {
 		String initialHand = "";

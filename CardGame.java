@@ -34,7 +34,7 @@ public class CardGame {
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
 			}
-			decks.add(new Deck(file));
+			decks.add(new Deck(file, i));
 		}
 		for (int i = 0; i < n; i++) {
 			drawDeck = decks.get(i).getOutPile();
