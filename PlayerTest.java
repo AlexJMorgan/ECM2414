@@ -2,6 +2,8 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.io.File;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
 
 
 public class PlayerTest {
@@ -97,6 +99,83 @@ public class PlayerTest {
 			assertFalse(discardDeck.getCard().getValue() == 3);
 		}
 	}
+	
+	@Test
+	public void TestDraw() {
+		for (int j=0; j<3; j++) {
+			player.addCard(new Card(1));
+		}
+		player.addCard(new Card(2));
+		
+		player.draw();
+		player.discard();
+		
+		assertTrue(player.checkWin());
+		
+	}
+	
+	@Test
+	public void TestFileWrittenTo() {
+		for (int j=0; j<3; j++) {
+			player.addCard(new Card(1));
+		}
+		player.addCard(new Card(2));
+		
+		player.draw();
+		player.discard();
+		
+		String data = "";
+		int lines = 0;
+		
+		 try {
+			  File myObj = new File(file.getName());
+			  Scanner myReader = new Scanner(myObj);
+			  while (myReader.hasNextLine()) {
+				  lines++;
+				  data += "\n";
+				  data += myReader.nextLine();
+			  }
+			  myReader.close();
+		} catch (FileNotFoundException e) {
+			  System.out.println("An error occurred.");
+			  e.printStackTrace();
+		}
+		
+		assertTrue(lines == 3);
+		assertTrue(data.equals("\n\nplayer 1 draws a 1 from deck 1\nplayer 1 discards a 2 to deck 2"));
+			
+	}
+	
+	
+	@Test
+	public void TestPlayerInitialHand() {
+		for (int j=0; j<3; j++) {
+			player.addCard(new Card(5));
+		}
+		player.addCard(new Card(2));
+		
+		player.playerInitialHand();
+		
+		String data = "";
+		
+		try {
+			  File myObj = new File(file.getName());
+			  Scanner myReader = new Scanner(myObj);
+			  while (myReader.hasNextLine()) {
+				  data += "\n";
+				  data += myReader.nextLine();
+			  }
+			  myReader.close();
+		} catch (FileNotFoundException e) {
+			  System.out.println("An error occurred.");
+			  e.printStackTrace();
+		}
+		
+		assertTrue(data.equals("\nplayer 1 initial hand is 5 5 5 2"));
+		
+		
+	}
+	
 		
 }
 

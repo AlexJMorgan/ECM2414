@@ -9,6 +9,8 @@ import java.io.IOException;
 *@author Daniel and Alex
 *@version 0.1
 */
+
+
 public class Player {
 
 	private ArrayList<Card> cards;
@@ -97,7 +99,7 @@ public class Player {
 		for (int i=0; i<4; i++) {
 			initialHand += " " + cards.get(i).getValue();
 		}
-		writeToFile(file, "\nplayer "+index+" initial hand is"+initialHand);
+		writeToFile(file, "player "+index+" initial hand is"+initialHand);
 	}
 	
 	/**
