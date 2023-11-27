@@ -18,15 +18,17 @@ public class Deck {
 	public Object inLock = new Object();
 	public Object midLock = new Object();
 	public Object outLock = new Object();
+	private Thread inDaemonThread;
+	private Thread outDaemonThread;
 	private File file;
 	private int index;
 
 	public Deck(File file, int index) {
 		this.file = file;
 		InDaemon inDaemon = new InDaemon(this);
-		Thread inDaemonThread = new Thread(inDaemon);		
+		inDaemonThread = new Thread(inDaemon);		
 		OutDaemon outDaemon = new OutDaemon(this);
-		Thread outDaemonThread = new Thread(outDaemon);	
+		outDaemonThread = new Thread(outDaemon);	
 		inDaemonThread.start();
 		outDaemonThread.start();
 	}
@@ -92,6 +94,10 @@ public class Deck {
 	}
 	
 	public void printDeckContents() {
+		
+		inDeamonThread.interrupt();
+		outDaemonThread.interrupt();
+		
 		String hand = ""
 		ArrayList<Card> allCards = new ArrayList<>();
 		allCards.addAll(inPile);
@@ -127,12 +133,14 @@ class InDaemon implements Runnable{
 	public void run() {
 		
 		synchronized (deck.inLock) {
-			while (true) {
-				deck.inLock.wait();
-				synchronized (deck.midLock) {
-					deck.inPileToMid();
+			try {
+				while (true) {
+					deck.inLock.wait();
+					synchronized (deck.midLock) {
+						deck.inPileToMid();
+					}
 				}
-			}			
+			} catch (InterruptedException e) {}
 		}
 		
 	}
@@ -149,13 +157,15 @@ class OutDaemon implements Runnable{
 	
 	public void run() {
 		synchronized (deck.outLock) {
-			while (true) {
-				deck.outLock.wait();
-				synchronized (deck.midLock) {
-					deck.midPileToOut();
+			try {
+				while (true) {
+					deck.outLock.wait();
+					synchronized (deck.midLock) {
+						deck.midPileToOut();
+					}
+					deck.outLock.notify();
 				}
-				deck.outLock.notify();
-			}			
+			} catch (InterruptedException e) {}				
 		}
 	}
 }

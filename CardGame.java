@@ -12,8 +12,10 @@ import java.io.FileWriter;
 */
 public class CardGame {
 	
-	private ArrayList<Player> players;
-	private ArrayList<Deck> decks;
+	private static ArrayList<Player> players = new ArrayList<>();
+	private static ArrayList<Deck> decks = new ArrayList<>();
+	private static ArrayList<Thread> playerThreads = new ArrayList<>();
+	private static int winnerIndex = 0;
 
 	/**
  	*Main method invoked when the object is instantiated.
@@ -22,8 +24,6 @@ public class CardGame {
   	*/
 	public static void main(String[] args) {
 		int n = GetN();
-		ArrayList<Player> players;
-		ArrayList<Deck> decks;
 		for (int i = 0; i < n; i++) {
 			try {
 				File file = new File("deck"+(i+1)+"_output.txt";
@@ -54,6 +54,28 @@ public class CardGame {
 		}
 		ArrayList<Card> pack = ReadPack(n);
 		DealCards(players, decks, pack);
+		
+		for (int i=0; i<players.size(); i++) {
+			Thread playerThread = new Thread(player);
+			playerThreads.add(playerThread);
+			playerThread.start();
+		}
+	}
+	
+	public static void finish(int winner) {
+		winnerIndex = winner;
+		for (int i=0; i<playerThreads.size(); i++) {
+			if (i != winner-1) {
+				playerThreads.get(i).interrupt();
+			}
+		}
+		for (int i+0; i<decks.size(); i++) {
+			decks.get(i).printDeckContents();
+		}
+	}
+	
+	public static int getWinner() {
+		return winnerIndex;
 	}
 	
 	/**

@@ -49,11 +49,21 @@ public class Player implements Runnable{
 							drawDeck.outLock.notify();
 							drawDeck.outLock.wait();
 						}
+						if (Thread.interrupted()) {
+							throw new InterruptedException();
+						}
 						
 						draw();
 						discard();
 					} catch (InterruptedException e) {
-						System.out.println("Player "+index+" was interrupted");
+						int winner = CardGame.getWinner();
+						writeToFile("\nplayer "+winner+" has informed player "+index+" that player "+winner+" has won");
+						writeToFile("\nplayer "+index+" exits");
+						String cardValues = "";
+						for (int i=0; i<4; i++) {
+							cardValues += " " + cards.get(i).getValue();
+						}
+						writeToFile("\nplayer "+index+" hand:"+cardValues);
 					}
 				}
 				
@@ -63,10 +73,16 @@ public class Player implements Runnable{
 			for (int i=0; i<4; i++) {
 				cardValues += " " + cards.get(i).getValue();
 			}
-			writeToFile(file, "\nplayer "+index+" current hand is"+cardValues);
+			writeToFile("\nplayer "+index+" current hand is"+cardValues);
 		}
-		
-		
+		CardGame.finish(index);
+		writeToFile("\nplayer "+index+" wins");
+		writeToFile("\nplayer "+index+" exits");
+		String cardValues = "";
+		for (int i=0; i<4; i++) {
+			cardValues += " " + cards.get(i).getValue();
+		}
+		writeToFile("\nplayer "+index+" final hand is"+cardValues);
 	}
 	
 	/**
@@ -102,7 +118,7 @@ public class Player implements Runnable{
 		for (int i=0; i<4; i++) {
 			initialHand += " " + cards.get(i).getValue();
 		}
-		writeToFile(file, "player "+index+" initial hand is"+initialHand);
+		writeToFile("player "+index+" initial hand is"+initialHand);
 	}
 	
 	/**
@@ -110,7 +126,7 @@ public class Player implements Runnable{
 	*/
 	public void draw() {
 		Card card = drawDeck.getCard();
-		writeToFile(file, "\nplayer "+index+" draws a "+card.getValue()+" from deck "+index);
+		writeToFile("\nplayer "+index+" draws a "+card.getValue()+" from deck "+index);
 		cards.add(card);
 	}
 	
@@ -146,15 +162,15 @@ public class Player implements Runnable{
 			}
 		}
 		card.resetStaleness();
-		writeToFile(file, "\nplayer "+index+" discards a "+card.getValue()+" to deck "+discardIndex);
+		writeToFile("\nplayer "+index+" discards a "+card.getValue()+" to deck "+discardIndex);
 		discardDeck.giveCard(card);
 	}	
 
-	public void writeToFile(File file, String msg) {
+	public void writeToFile(String msg) {
 		try {
 			FileWriter writer = new FileWriter(file.getName(), true);
-		      	writer.write(msg);
-		      	writer.close();
+		    writer.write(msg);
+			writer.close();
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 		}
