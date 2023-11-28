@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
 
 /**
 *Class for deck
@@ -25,6 +27,7 @@ public class Deck {
 
 	public Deck(File file, int index) {
 		this.file = file;
+		this.index = index;
 		InDaemon inDaemon = new InDaemon(this);
 		inDaemonThread = new Thread(inDaemon);		
 		OutDaemon outDaemon = new OutDaemon(this);
@@ -95,19 +98,19 @@ public class Deck {
 	
 	public void printDeckContents() {
 		
-		inDeamonThread.interrupt();
+		inDaemonThread.interrupt();
 		outDaemonThread.interrupt();
 		
-		String hand = ""
+		String hand = "";
 		ArrayList<Card> allCards = new ArrayList<>();
 		allCards.addAll(inPile);
 		allCards.addAll(outPile);
 		allCards.addAll(midPile);
 		
-		for (int i = 0; i<4; i++) {
+		for (int i = 0; i<allCards.size(); i++) {
 			hand += " "+ allCards.get(i).getValue();
 		}
-		String msg = "deck" + index + "contents:" +hand;		
+		String msg = "deck" + index + " contents:" +hand;		
 		
 		try {
 			FileWriter writer = new FileWriter(file.getName(), true);
@@ -140,7 +143,9 @@ class InDaemon implements Runnable{
 						deck.inPileToMid();
 					}
 				}
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 		
 	}
@@ -165,7 +170,9 @@ class OutDaemon implements Runnable{
 					}
 					deck.outLock.notify();
 				}
-			} catch (InterruptedException e) {}				
+			} catch (InterruptedException e) {
+				return;
+			}				
 		}
 	}
 }

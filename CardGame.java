@@ -16,6 +16,7 @@ public class CardGame {
 	private static ArrayList<Deck> decks = new ArrayList<>();
 	private static ArrayList<Thread> playerThreads = new ArrayList<>();
 	private static int winnerIndex = 0;
+	private static int n;
 
 	/**
  	*Main method invoked when the object is instantiated.
@@ -23,55 +24,61 @@ public class CardGame {
    	*Creates n player objects.
   	*/
 	public static void main(String[] args) {
-		int n = GetN();
+		n = GetN();
 		for (int i = 0; i < n; i++) {
 			try {
-				File file = new File("deck"+(i+1)+"_output.txt";
+				File file = new File("deck"+(i+1)+"_output.txt");
 				if (!file.createNewFile()) {
 					file.delete();
 					file.createNewFile();
-			      	}
+			    }
+				decks.add(new Deck(file, i+1));
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
 			}
-			decks.add(new Deck(file, i));
 		}
 		for (int i = 0; i < n; i++) {
-			drawDeck = decks.get(i).getOutPile();
-			discardDeck = decks.get((i+1)%n).getInPile();
+			Deck drawDeck = decks.get(i);
+			Deck discardDeck = decks.get((i+1)%n);
 			try {
 				File file = new File("player"+(i+1)+"_output.txt");
 			      	if (!file.createNewFile()) {
-					file.delete();
-					file.createNewFile();
+						file.delete();
+						file.createNewFile();
 			      	}
+					players.add(new Player(i+1, (i+1)%n +1, drawDeck, discardDeck, file));
 			} catch (IOException e) {
 				System.out.println("An error occurred.");
 			}
 			
-			
-			players.add(new Player(i, (i+1)%n, drawDeck, discardDeck, file));
+
 		}
 		ArrayList<Card> pack = ReadPack(n);
 		DealCards(players, decks, pack);
 		
+		
 		for (int i=0; i<players.size(); i++) {
-			Thread playerThread = new Thread(player);
+			Thread playerThread = new Thread(players.get(i));
 			playerThreads.add(playerThread);
 			playerThread.start();
 		}
+		System.out.println("game started! ! ");
 	}
 	
 	public static void finish(int winner) {
-		winnerIndex = winner;
-		for (int i=0; i<playerThreads.size(); i++) {
-			if (i != winner-1) {
-				playerThreads.get(i).interrupt();
+		if (winnerIndex == 0) {
+			winnerIndex = winner;
+			for (int i=0; i<playerThreads.size(); i++) {
+				if (i != winner-1) {
+					playerThreads.get(i).interrupt();
+				}
 			}
+			for (int i=0; i<decks.size(); i++) {
+				decks.get(i).printDeckContents();
+			}
+			System.out.println("Player "+winner+" wins");
 		}
-		for (int i+0; i<decks.size(); i++) {
-			decks.get(i).printDeckContents();
-		}
+
 	}
 	
 	public static int getWinner() {
@@ -83,6 +90,7 @@ public class CardGame {
 	*@param cards	The ArrayList of cards in the pack, extracted from the pack file.
 	*/
 	public static void DealCards(ArrayList<Player> players, ArrayList<Deck> decks, ArrayList<Card> cards) {
+		
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < n; j++) {
 				players.get(j).addCard(cards.get(0));
@@ -108,21 +116,26 @@ public class CardGame {
 	public static ArrayList<Card> ReadPack(int n) {
 		while (true) {
 			Scanner scanner = new Scanner(System.in);
-			System.out.print("Enter pack file name: ");
+			System.out.println("Please enter location of pack to load:");
 			String fileName = scanner.nextLine();
-			if (!fileName.substring(-4).equals(".txt")) {
+			int fileNameLength = fileName.length();
+			if (fileNameLength < 4 || !fileName.substring(fileNameLength-4).equals(".txt")) {
 				fileName += ".txt";
 			}
-			
-			ArrayList<Card> cards;
+						
+			ArrayList<Card> cards = new ArrayList<>();
 			String errorMsg = "";
 			
 			try {
 				File packFile = new File(fileName);
-				Scanner fileReader = newScanner(packFile);
+				Scanner fileReader = new Scanner(packFile);
 				while (fileReader.hasNextLine()) {
 					String data = fileReader.nextLine();
-					Card card = new Card(data);
+					int intData = Integer.parseInt(data);
+					if (intData < 0) {
+						throw new NumberFormatException();
+					}					
+					Card card = new Card(intData);
 					cards.add(card);
 				} 
 						
@@ -130,6 +143,8 @@ public class CardGame {
 				
 			} catch (FileNotFoundException e) {
 				errorMsg = "Error finding file.";
+			} catch (NumberFormatException e) {
+				errorMsg = "Card values must be non negative integers.";
 			}
 
 			if (cards.size() != 8*n) {
@@ -139,5 +154,26 @@ public class CardGame {
 			}
 			System.out.println(errorMsg);
 		}
+	}
+	
+	public static int GetN() {
+		Scanner scanner = new Scanner(System.in);
+		while (true) {
+			System.out.println("Please enter the number of players:");
+			String n = scanner.nextLine();
+			try {
+				int intN = Integer.parseInt(n);
+				if (intN > 1) {
+					return intN;
+				}
+				System.out.println("Please enter a valid integer.");
+			} catch (NumberFormatException e) {
+				System.out.println("Please enter a integer.");
+			}
+								
+			
+		}
+		
+
 	}
 }

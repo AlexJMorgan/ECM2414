@@ -64,6 +64,7 @@ public class Player implements Runnable{
 							cardValues += " " + cards.get(i).getValue();
 						}
 						writeToFile("\nplayer "+index+" hand:"+cardValues);
+						return;
 					}
 				}
 				
