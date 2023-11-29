@@ -1,6 +1,12 @@
 import org.junit.*;
 import static org.junit.Assert.*;
 
+
+/**
+*Test class for Card using JUnit4.10.
+*@author Daniel and Alex
+*@version 1.0
+*/
 public class CardTest {
 	@Test
 	public void TestInitialParams() {

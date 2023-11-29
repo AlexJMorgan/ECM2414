@@ -1,7 +1,7 @@
 /**
 *Class for each card.
-*@author Daniel
-*@version 0.1
+*@author Daniel and Alex
+*@version 1.0
 */
 public class Card {
 
@@ -11,7 +11,6 @@ public class Card {
 	/**
 	*Constructor method for the Card class.
 	*@param value	value of the card.
-	*@param stale	turns the card has been in the same hand
 	*/
 	public Card(int value) {
 		this.value = value;

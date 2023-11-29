@@ -6,6 +6,11 @@ import java.util.Scanner;
 import java.io.FileNotFoundException;
 
 
+/**
+*Test class for Player using JUnit4.10.
+*@author Daniel and Alex
+*@version 1.0
+*/
 public class PlayerTest {
 	
 	private File file;
@@ -179,10 +184,16 @@ public class PlayerTest {
 		
 }
 
-//Mock object of Deck class.
+/*
+*A mock object to represent decks when testing Player.
+*@author Daniel and Alex
+*@version 1.0
+*/
 class Deck {
 	
 	public ArrayList<Card> deck = new ArrayList<>();
+	
+	public Deck() {};
 	
 	public Card getCard() {
 		Card card = deck.get(0);

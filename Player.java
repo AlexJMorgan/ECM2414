@@ -8,7 +8,7 @@ import java.io.IOException;
 *Player Class to represent each player in the card game.
 *Stores its hand of cards and the decks it draws/discards from.
 *@author Daniel and Alex
-*@version 0.1
+*@version 1.0
 */
 
 public class Player implements Runnable{
@@ -26,7 +26,7 @@ public class Player implements Runnable{
 	*@param index			used to refer to the player in log messages and set preferred card value
 	*@param discardIndex	used to refer to the discard deck in log messages
 	*@param drawDeck		deck the player draws cards from
-	*@param discarDeck		deck the player discards cards to
+	*@param discardDeck		deck the player discards cards to
 	*@param file			file reference where player outputs their moves
 	*/
 	public Player(int index, int discardIndex, Deck drawDeck, Deck discardDeck, File file) {
@@ -38,6 +38,14 @@ public class Player implements Runnable{
 		this.file = file;
 	}
 	
+	
+	/**
+	*Run method for Player Threads.
+	*Draws and discards cards as required by the game.
+	*Declares victory to CardGame, if player has a winning hand.
+	*Can be interrupted if another player wins first.
+	*Keeps a running log of activities in output file.
+	*/
 	public void run() {
 		
 		playerInitialHand();
@@ -110,10 +118,8 @@ public class Player implements Runnable{
 	}
 	
 	/**
-	*Draws a card from the draw pile, and discards an unwanted card to the discard pile.
-	*Will wait if draw deck is empty, and notify waiting threads when discarding.
+	*Writes the initial hand of player to the output file.
 	*/
-	
 	public void playerInitialHand() {
 		String initialHand = "";
 		for (int i=0; i<4; i++) {
@@ -167,6 +173,10 @@ public class Player implements Runnable{
 		discardDeck.giveCard(card);
 	}	
 
+	/**
+	*Writes the given message to the players output file.
+	*@param msg		message to be written
+	*/
 	public void writeToFile(String msg) {
 		try {
 			FileWriter writer = new FileWriter(file.getName(), true);

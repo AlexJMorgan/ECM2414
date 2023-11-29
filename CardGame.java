@@ -9,6 +9,8 @@ import java.io.FileWriter;
 *The main class for the card game.
 *Manages set up and finishing, and keeps references
 *to all players and decks.
+*@author Daniel and Alex
+*@version 1.0
 */
 public class CardGame {
 	
@@ -20,8 +22,8 @@ public class CardGame {
 
 	/**
  	*Main method invoked when the object is instantiated.
-  	*Creates a deck object for each player.
-   	*Creates n player objects.
+	*Queries user for n and pack file.
+	*Creates n deck and player objects.
   	*/
 	public static void main(String[] args) {
 		n = GetN();
@@ -62,9 +64,14 @@ public class CardGame {
 			playerThreads.add(playerThread);
 			playerThread.start();
 		}
-		System.out.println("game started! ! ");
 	}
 	
+	
+	/**
+	*Terminates all threads once a player has won.
+	*Declares winner in terminal.
+	*@param winner	integer index of the winner thread.
+	*/
 	public static void finish(int winner) {
 		if (winnerIndex == 0) {
 			winnerIndex = winner;
@@ -81,13 +88,19 @@ public class CardGame {
 
 	}
 	
+	/**
+	*Returns the index of the winning player.
+	*@return winnerIndex	index of winning player
+	*/
 	public static int getWinner() {
 		return winnerIndex;
 	}
 	
 	/**
 	*Deals cards from initial pack to players and decks in round robin fashion.
-	*@param cards	The ArrayList of cards in the pack, extracted from the pack file.
+	*@param players	The ArrayList of players
+	*@param decks	The ArrayList of decks
+	*@param cards	The ArrayList of cards in the pack
 	*/
 	public static void DealCards(ArrayList<Player> players, ArrayList<Deck> decks, ArrayList<Card> cards) {
 		
@@ -112,6 +125,7 @@ public class CardGame {
  	*Continues asking the user for a pack, until they provide a valid input.
   	*Outputs the necessary error message to inform the user of the issue.
    	*@param n	Provides the number of players to ensure there are 8*n cards provided.
+	*@return	The ArrayList of cards in the pack, extracted from the pack file.
 	*/	
 	public static ArrayList<Card> ReadPack(int n) {
 		while (true) {
@@ -156,6 +170,12 @@ public class CardGame {
 		}
 	}
 	
+	/**
+	*Gets the number of players from the user.
+	*Will keep asking the user until a valid input is recieved.
+	*Displays appropriate error message.
+	*@return	the integer value of the number of players
+	*/
 	public static int GetN() {
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
