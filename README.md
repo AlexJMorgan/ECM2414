@@ -1,9 +1,8 @@
 # ECM2414
 Software Development Coursework
-8/11/2023- 1:25-3:45
-15/11/2023- 12:50-1:50
-19/11/2023- 11:00-12:17
-24/11/2023- 7:00-9:03
-26/11/2023- 11:34-1:15
-26/11/2023- 2:00-3:20
-27/11/2023- 7:22-9:56
+The tests use JUnit 4.10. To run them, install JUnit 4.10 and add it to the classpath. Then execute the following code from the cmd in the project directory:
+java org.junit.runner.JUnitCore CardTest
+java org.junit.runner.JUnitCore CardGameTest
+java org.junit.runner.JUnitCore DeckTest
+java org.junit.runner.JUnitCore PlayerTest
+These will run the tests from CardTest.class, CardGameTest.class, DeckTest.class and PlayerTests.class respectively.
